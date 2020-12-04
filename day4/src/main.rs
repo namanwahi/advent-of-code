@@ -98,6 +98,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let passports = reader.lines()
         .map(|line| line.unwrap())
+        // collect passports in a string of a single line
         .fold(vec![String::new()], |mut acc, line| {
             match line.as_str() {
                 "" => { acc.push(String::new()); acc },
@@ -105,6 +106,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
         })
         .iter()
+        // attempt to parse the passport with any permutation of the fields. Filter correct parses.
         .filter(|passport| permutation((pid, hgt, ecl, eyr, byr, hcl, iyr, cid))(passport).is_ok())
         .count();
 
