@@ -3,23 +3,15 @@ extern crate nom;
 
 use std::fs::File;
 use std::str;
-use std::io::{self, BufRead, ErrorKind};
+use std::io::{self, BufRead};
 use std::error::Error;
-use std::collections::{HashSet, HashMap};
-use std::ops::Index;
-use std::cmp;
-use std::iter::{self,Chain};
-use std::slice::Iter;
-use std::fmt;
+use std::collections::HashMap;
 
 use nom::{
     IResult,
-    bytes::complete::{tag, take_while_m_n, take_until, take_till, take},
-    combinator::map_res,
-    sequence::{tuple, separated_pair},
-    character::{complete::{digit1, space0, space1, anychar, one_of, alpha1}, is_alphanumeric},
-    multi::{separated_list0,many1,many_m_n},
-    branch::{alt, permutation},
+    bytes::complete::tag,
+    sequence::{tuple},
+    character::{complete::{digit1, space0, space1, alpha1}},
 };
 
 // parsing macros
