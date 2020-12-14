@@ -3,10 +3,11 @@ use std::str;
 use std::io::{self, BufRead};
 use std::error::Error;
 use std::collections::HashMap;
-use std::iter::successors;
+
+use num::integer::lcm;
 
 fn check_time(timestamp: u64, bus_ids: &[u64]) -> bool {
-    // PART 2 helper func
+    // PART 2 helper func - returns true if bus_ids run continuously past timestamp
     for (i, bus_id) in bus_ids.iter().enumerate() {
         if (timestamp + i as u64) % bus_id != 0 {
             return false
@@ -21,7 +22,7 @@ fn main() -> Result<(), Box<dyn Error>>{
 
     let start: u64 = lines.next().unwrap().parse()?;
     let bus_ids: Vec<Option<u64>> = lines.next().unwrap().split(",")
-        .map(|s: &str| 
+        .map(|s: &str|
             match s {
                 "x" => None,
                 bus_id => Some(bus_id.parse::<u64>().unwrap()),
@@ -38,18 +39,21 @@ fn main() -> Result<(), Box<dyn Error>>{
     }
 
     // PART 2
+
+    // replace 'x's with bus_ids of 1
     let bus_ids: Vec<u64> = bus_ids.iter().map(|bus_id| if let Some(id) = bus_id { *id } else { 1 }).collect();
-    let max_id: u64 = *bus_ids.iter().max().unwrap();
-    let max_idx: usize = bus_ids.iter().position(|&val| val == max_id).unwrap();
-    let earliest_departure_of_max: u64 = (start..u64::MAX).filter(|t| t % max_id == 0).next().unwrap();
+    let mut tstamp = start;
+    let mut step = 1;
+    for (i, bus_id) in bus_ids.iter().enumerate() {
+        let slice_to_match = &bus_ids[0..i+1];
+        while !check_time(tstamp, slice_to_match) {
+            tstamp += step;
+        }
+        // increase step by the least common multiple to skip unecessary checks
+        step = lcm(step, *bus_id);
+    }
 
-    let part_2 = successors(Some(earliest_departure_of_max), |n| Some(n + max_id))
-        .map(|departure_of_max| { println!("{}", departure_of_max); departure_of_max - max_idx as u64})
-        .filter(|&first_departure| check_time(first_departure, &bus_ids))
-        .next().unwrap();
-
-    println!("{:?} {:?} {:?} {:?} {:?}", bus_ids, max_id, max_idx, earliest_departure_of_max, part_2);
-
+    println!("{:?}", tstamp);
 
     Ok(())
 }
