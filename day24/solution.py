@@ -40,9 +40,9 @@ def get_all_tiles_to_consider(black_tiles: Set[Tuple[int, int, int]]) -> Set[Tup
     return res
 
 if __name__ == "__main__":
-    with open("inputs.txt", "r") as f:
+    with open("inputs.txt", "r") as input:
         black_tiles = set()
-        for line in f:
+        for line in input:
             tile = get_tile(split_tile_directions(line.strip()))
             if tile in black_tiles:
                 black_tiles.remove(tile)
