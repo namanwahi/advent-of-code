@@ -10,19 +10,19 @@ DIRS = {
     "nw": np.array([-1, 0, 1])
 }
 
-def split_tile_encoding(tile_encoding: str) -> List[str]:
+def split_tile_directions(tile_directions: str) -> List[str]:
     res = []
-    while tile_encoding:
+    while tile_directions:
         for d in ["nw", "ne", "sw", "se", "e", "w"]:
-            if tile_encoding.startswith(d):
+            if tile_directions.startswith(d):
                 res.append(d)
-                tile_encoding = tile_encoding[len(d):]
+                tile_directions = tile_directions[len(d):]
                 break
     return res
 
-def get_tile(tile_encoding: List[str]) -> Tuple[int, int, int]:
+def get_tile(tile_directions: List[str]) -> Tuple[int, int, int]:
     res = np.array([0, 0, 0])
-    for d in tile_encoding:
+    for d in tile_directions:
         res += DIRS[d]
     return tuple(res.tolist())
 
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     with open("inputs.txt", "r") as f:
         black_tiles = set()
         for line in f:
-            tile = get_tile(split_tile_encoding(line.strip()))
+            tile = get_tile(split_tile_directions(line.strip()))
             if tile in black_tiles:
                 black_tiles.remove(tile)
             else:
@@ -58,13 +58,12 @@ if __name__ == "__main__":
                 adjacent_black_tiles = len(set(get_all_adjacent(tile)) & black_tiles)
                 if tile in black_tiles and adjacent_black_tiles in [1, 2]:
                     new_black_tiles.add(tile)
-                
+
                 if tile not in black_tiles and adjacent_black_tiles == 2:
                     new_black_tiles.add(tile)
 
             black_tiles = new_black_tiles
-            print(day, len(new_black_tiles))
-                
+        print("Part 2", len(new_black_tiles))
 
 
-            
+
